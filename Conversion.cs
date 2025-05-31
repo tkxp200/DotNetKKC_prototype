@@ -120,8 +120,6 @@ public class Conversion
         PriorityQueue<(Node, string, double), double> queue = new();
         Dictionary<string, double> results = new();
 
-        if (n <= 0) return results;
-
         queue.Enqueue((eos, eos.key, 0), eos.cost);
 
         while (queue.TryDequeue(out (Node, string, double) item, out double cost))
@@ -142,7 +140,7 @@ public class Conversion
                     queue.Enqueue((edge.fromNode, item.Item1.key + item.Item2, backwardCost), heuristicCost);
                 }
             }
-            if (results.Count == n) return results;
+            if (results.Count >= n) break;
         }
 
         return results;
