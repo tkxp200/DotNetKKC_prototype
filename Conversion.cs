@@ -60,7 +60,7 @@ public class Conversion
 
     public Dictionary<string, double> GetConversion(string text, int n = 10)
     {
-        Console.WriteLine($"Convert: {text}");
+        // Console.WriteLine($"Convert: {text}");
         var result = doubleArrayTrie.ParseText(text);
 
         List<Node>[] parentNodeList = new List<Node>[text.Length + 1]; //Contain BOS
@@ -150,12 +150,21 @@ public class Conversion
 public class DoubleArrayGenerator
 {
     List<KeyValuePair<string, int>> dic = new List<KeyValuePair<string, int>>();
-    AhoCorasickDoubleArrayTrie<int> doubleArrayTrie;
+    AhoCorasickDoubleArrayTrie<int>? doubleArrayTrie;
 
-    public DoubleArrayGenerator(string filePath)
+    string _dictionaryPath;
+    string _doubleArrayPath;
+
+    public DoubleArrayGenerator(string dictionaryPath, string doubleArrayPath)
+    {
+        _dictionaryPath = dictionaryPath;
+        _doubleArrayPath = doubleArrayPath;
+    }
+
+    public void Build()
     {
         LoadMozcDictionary();
-        BuildDoubleArrayFile(filePath);
+        BuildDoubleArrayFile();
     }
 
     void LoadMozcDictionary()
@@ -163,7 +172,7 @@ public class DoubleArrayGenerator
         int index = 0;
         for(int i = 0; i < 10; ++i)
         {
-            var filePath = Path.Combine("dic", $"dictionary{i:00}.txt");
+            var filePath = Path.Combine(_dictionaryPath, $"dictionary{i:00}.txt");
             var result = File.ReadAllLines(filePath);
             foreach(var line in result)
             {
@@ -174,10 +183,10 @@ public class DoubleArrayGenerator
         }
     }
 
-    void BuildDoubleArrayFile(string filePath)
+    void BuildDoubleArrayFile()
     {
         doubleArrayTrie = new AhoCorasickDoubleArrayTrie<int>(dic);
-        using var fileStream = new FileStream(filePath, FileMode.Create);
+        using var fileStream = new FileStream(_doubleArrayPath, FileMode.Create);
         doubleArrayTrie.Save(fileStream, true);
     }
 }
