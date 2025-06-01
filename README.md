@@ -15,7 +15,7 @@ C#でかな漢字変換を実現するライブラリです。以下の特徴を
 使用には\.NET SDKが必要です。
 
 + リポジトリのクローン
-  
+
   ```
   git clone https://github.com/tkxp200/DotNetKKC_prototype.git
   ```
@@ -26,12 +26,12 @@ C#でかな漢字変換を実現するライブラリです。以下の特徴を
   cd DotNetKKCTest
   ```
 + DotNetKKCを依存関係に追加
-  
+
   ```
   dotnet add reference ../DotNetKKC_prototype/DotNetKKC.csproj
   ```
 + 辞書データの配置
-  
+
   dicディレクトリを作成し[Google Mozcのsrc/data/dictionary_oss](https://github.com/google/mozc/tree/master/src/data/dictionary_oss)配下にある`dictionary*.txt`および`connection_single_column.txt`を配置します。
 
   検証はしていませんが[mozc-ut辞書](https://github.com/utuhiro78/merge-ut-dictionaries/tree/main)も使用できると思います。
@@ -54,26 +54,28 @@ C#でかな漢字変換を実現するライブラリです。以下の特徴を
   |       dictionary09.txt
   ```
 + DoubleArrayの生成
-  
+
   `Program.cs`を次のように編集し変換に必要なDoubleArrayファイルをdicフォルダ配下にあるtxtファイルを用いて生成します。
   - Program.cs
 
     ```cs
-    using DotNetKKC;
+	using DotNetKKC;
 
-    string filePath = @"dic/dictionary.doublearray";
+	string dictionaryPath = @"./dic";
+	string doubleArrayPath = @"./dic/dictionary.doublearray";
 
-    var generator = new DoubleArrayGenerator(filePath);
+	var generator = new DoubleArrayGenerator(dictionaryPath, doubleArrayPath);
 
+	generator.Build();
     ```
   - 実行
- 
+
     ```bash
     dotnet build
     dotnet run
     ```
     実行には30秒～2分ほどかかります。
-  
+
     dicディレクトリ配下に`dictionary.doublearray`が生成されていればOKです。
     ```
     $ ls dic
@@ -92,24 +94,24 @@ C#でかな漢字変換を実現するライブラリです。以下の特徴を
   - Program.cs
 
     ```cs
-    ﻿using DotNetKKC;
+	using DotNetKKC;
 
-    string filePath = @"dic/dictionary.doublearray";
-    
-    var conversion = new Conversion(filePath);
-    
-    Dictionary<string, double> result = conversion.GetConversion("ここではきものをぬぐ", 20);
-    
-    int i = 0;
-    foreach (KeyValuePair<string, double> item in result)
-    {
-        Console.WriteLine($"{i + 1:00}Best Conversion: {item.Value:000000}, {item.Key}");
-        i++;
-    }
+	string doubleArrayPath = @"./dic/dictionary.doublearray";
+
+	var conversion = new Conversion(doubleArrayPath);
+
+	Dictionary<string, double> result = conversion.GetConversion("ここではきものをぬぐ", 20);
+
+	int i = 0;
+	foreach (KeyValuePair<string, double> item in result)
+	{
+	    Console.WriteLine($"{i + 1:00}Best Conversion: {item.Value:000000}, {item.Key}");
+	    i++;
+	}
     ```
     `GetConversion()`の第二引数で取得する変換候補の数nを設定できます。省略するとn=10の変換候補が返ってきます。
   - 実行
- 
+
     ```
     $ dotnet run
     Convert: ここではきものをぬぐ
@@ -134,4 +136,3 @@ C#でかな漢字変換を実現するライブラリです。以下の特徴を
     19Best Conversion: 021065, ココでは着物を脱ぐ
     20Best Conversion: 021129, ここで破棄物を脱ぐ
     ```
-    
