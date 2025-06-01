@@ -10,7 +10,7 @@ public class Conversion
 {
     AhoCorasickDoubleArrayTrie<int> doubleArrayTrie;
     List<(int, int, int, string)> dictionary = new List<(int, int, int, string)>();
-    int[,] connectionCost;
+    int[,] connectionCost = null!;
 
     public Conversion(string filePath)
     {
